@@ -6,7 +6,7 @@
 (cl:in-package #:cl-user)
 
 (defpackage #:chronicity
-  (:use #:cl)
+  (:use #:cl #:parse-number)
   (:export #:parse
            #:*now*
            #:*context*

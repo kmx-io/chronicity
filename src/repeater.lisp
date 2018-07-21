@@ -72,7 +72,7 @@
 
 ;;; TODO: repeater.rb has options here, what does it do?
 (defun scan-for-times (token &aux (word (token-word token)))
-  (when (cl-ppcre:scan #?r"^\d{1,2}(:?\d{2})?([\.:]?\d{2})?$" word)
+  (when (cl-ppcre:scan #?r"^\d{1,2}(:?\d{2})(:?\d{2})?([.]\d+)?$" word)
     (create-tag 'repeater-time word)))
 
 (defun scan-for-units (token &aux (word (token-word token)))

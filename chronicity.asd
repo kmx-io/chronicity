@@ -14,7 +14,7 @@
   :author "Chaitanya Gupta"
   :maintainer "Chaitanya Gupta"
   :license "BSD"
-  :depends-on (:cl-ppcre :cl-interpol :local-time)
+  :depends-on (:cl-ppcre :cl-interpol :local-time :parse-number)
   :components
   ((:module src
             :serial t

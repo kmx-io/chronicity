@@ -76,7 +76,7 @@ matching instance of that time will be used."
 (defun pre-normalize (text)
   (setf text (string-downcase text))
   (setf text (chronicity-numerizer:numerize text))
-  (rr-all-f text #?/['\"\.]/ "")
+  (rr-all-f text #?/['\"]/ "")
   (rr-all-f text #?/([\/\-\,\@])/ " \\1 ")
   (rr-all-f text #?/\btoday\b/ "this day")
   (rr-all-f text #?/\btomm?orr?ow\b/ "next day")

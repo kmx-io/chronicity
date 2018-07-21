@@ -13,15 +13,16 @@
 (defun make-date (year &optional (month 1) (day 1))
   (local-time:encode-timestamp 0 0 0 0 day month year))
 
-(defun make-time (hour &optional (minute 0) (sec 0))
+(defun make-time (hour &optional (minute 0) (sec 0) (nsec 0))
   (local-time:adjust-timestamp
       (local-time:timestamp-minimize-part (local-time:make-timestamp) :hour)
     (offset :hour hour)
     (offset :minute minute)
-    (offset :sec sec)))
+    (offset :sec sec)
+    (offset :nsec nsec)))
 
-(defun make-datetime (year &optional (month 1) (day 1) (hour 0) (minute 0) (sec 0))
-  (local-time:encode-timestamp 0 sec minute hour day month year))
+(defun make-datetime (year &optional (month 1) (day 1) (hour 0) (minute 0) (sec 0) (nsec 0))
+  (local-time:encode-timestamp nsec sec minute hour day month year))
 
 (defun copy-date (from &key
                   (year (year-of from))
@@ -32,8 +33,9 @@
 (defun copy-time (from &key
                   (hour (hour-of from))
                   (minute (minute-of from))
-                  (sec (sec-of from)))
-  (make-time hour minute sec))
+                  (sec (sec-of from))
+                  (nsec (nsec-of from)))
+  (make-time hour minute sec nsec))
 
 (defun copy-datetime (from &key
                        (year (year-of from))
@@ -41,15 +43,17 @@
                        (day (day-of from))
                        (hour (hour-of from))
                        (minute (minute-of from))
-                       (sec (sec-of from)))
-  (make-datetime year month day hour minute sec))
+                       (sec (sec-of from))
+                       (nsec (nsec-of from)))
+  (make-datetime year month day hour minute sec nsec))
 
 (defun merge-datetime (date time)
   (let* ((epoch-time (make-time 0 0 0))
          (diff-sec (local-time:timestamp-difference time epoch-time))
          (diff-days (truncate diff-sec #.(* 24 60 60))))
     (datetime-incr (make-datetime (year-of date) (month-of date) (day-of date)
-                                  (hour-of time) (minute-of time) (sec-of time))
+                                  (hour-of time) (minute-of time) (sec-of time)
+                                  (nsec-of time))
                    :day
                    diff-days)))
 
@@ -78,6 +82,9 @@
 
 (defun sec-of (datetime)
   (local-time:timestamp-second datetime))
+
+(defun nsec-of (datetime)
+  (local-time:nsec-of datetime))
 
 (defun dow-of (datetime)
   (local-time:timestamp-day-of-week datetime))

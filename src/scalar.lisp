@@ -32,9 +32,10 @@
                    :test #'equalp))))
 
 (defun scan-for-scalars (token post-token)
-  (when (and (cl-ppcre:scan #?r"^\d*$" (token-word token))
+  (when (and (cl-ppcre:scan #?r"^(:?\d+(:?[.]\d+)?)$"
+                            (token-word token))
              (check-post-token post-token))
-    (create-tag 'scalar (parse-integer (token-word token)))))
+    (create-tag 'scalar (parse-number (token-word token)))))
 
 (defclass scalar-day (scalar)
   ())
