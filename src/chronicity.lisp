@@ -67,7 +67,7 @@ matching instance of that time will be used."
   (setf text (pre-normalize text))
   (setf tokens (tokenize text))
   (loop
-     for type in (list 'repeater 'grabber 'pointer 'scalar 'ordinal 'separator) ; 'timezone
+     for type in (list 'repeater 'grabber 'pointer 'scalar 'ordinal 'separator 'timezone)
      do (scan-tokens type tokens))
   (pre-process-tokens tokens)
   ;; Guess date

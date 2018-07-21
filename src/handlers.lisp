@@ -167,13 +167,24 @@
     (or time
         (make-span date-start (datetime-incr date-start :day)))))
 
+(defun adjust-timezone (datetime tz)
+  (let* ((subtimezone (local-time:timestamp-subtimezone
+                       (local-time:now) local-time:*default-timezone*))
+         (offset (- tz subtimezone)))
+    (format t "~&subtimezone ~S tz ~S offset ~S~%"
+            subtimezone tz offset)
+    (datetime-incr datetime :sec offset)))
+
 (defun dealias-and-disambiguate-time (tokens)
   (let* ((time-token (find-if #'(lambda (x)
                                   (find-tag 'repeater-time x))
                               tokens))
          (dp-token (find-if #'(lambda (x)
-                                         (find-tag 'repeater-day-portion x))
-                                     tokens)))
+                                (find-tag 'repeater-day-portion x))
+                            tokens))
+         (tz-token (find-if #'(lambda (x)
+                                (find-tag 'timezone x))
+                            tokens)))
     (when (and dp-token time-token)
       (let ((dp-tag (find-tag 'repeater-day-portion dp-token)))
         (case (tag-type dp-tag)
@@ -183,12 +194,17 @@
           ((:afternoon :evening :night)
            (untag 'repeater-day-portion dp-token)
            (tag (create-tag 'repeater-day-portion :pm) dp-token)))))
-    (when *ambiguous-time-range*
-      (let ((time-tag (and time-token (find-tag 'repeater-time time-token))))
-        (when (and time-tag
+    (let ((time-tag (and time-token (find-tag 'repeater-time time-token))))
+      (when time-tag
+        (when (and *ambiguous-time-range*
                    (tick-ambiguousp (tag-type time-tag))
                    (not dp-token))
           (push (create-token "disambiguator"
                               (create-tag 'repeater-day-portion *ambiguous-time-range*))
-                tokens))))
+                tokens))
+        (when tz-token
+          (let* ((tz (token-tag-type 'timezone tz-token))
+                 (tick (tag-type time-tag))
+                 (time (adjust-timezone (tick-time tick) tz)))
+            (setf (tick-time tick) time)))))
     tokens))
