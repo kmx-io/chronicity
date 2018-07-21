@@ -129,7 +129,7 @@
 
 (define-handler (date)
     (tokens)
-    ((scalar-year separator-slash-or-dash scalar-month separator-slash-or-dash scalar-day (? separator-at) (? p time)))
+    ((scalar-year separator-slash-or-dash scalar-month separator-slash-or-dash scalar-day (? separator-at repeater-time) (? repeater-time) (? timezone)))
   (setf tokens (remove-separators tokens))
   (let* ((year (token-tag-type 'scalar-year (first tokens)))
          (month (token-tag-type 'scalar-month (second tokens)))
